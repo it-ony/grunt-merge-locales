@@ -3,9 +3,30 @@
 var _ = require('underscore'),
     path = require('path');
 
-_.mixin({
-    deepExtend: require('underscore-deep-extend')(_)
-});
+function deepExtend(destination, source) {
+    for (var property in source) {
+        if (source.hasOwnProperty(property) && source[property] && source[property].constructor &&
+            source[property].constructor === Object) {
+            destination[property] = destination[property] || {};
+            deepExtend(destination[property], source[property]);
+        } else {
+            destination[property] = source[property];
+        }
+    }
+    return destination;
+}
+
+_.deepExtend = function(input) {
+
+    for (var i = 1; i < arguments.length; i++) {
+        deepExtend(input, arguments[i]);
+    }
+
+    return input;
+
+};
+
+
 
 module.exports = function (grunt) {
 

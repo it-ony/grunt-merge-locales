@@ -1,6 +1,6 @@
 {
   "name": "grunt-merge-locales",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "merges json files together",
   "main": "index.js",
   "scripts": {
@@ -17,7 +17,6 @@
   },
   "homepage": "https://github.com/it-ony/grunt-merge-locales",
   "dependencies": {
-    "underscore-deep-extend": "0.0.5",
     "underscore": "~1.7.0"
   }
 }
