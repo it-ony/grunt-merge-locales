@@ -72,6 +72,14 @@ Generates localized i18n files based on the given `locales`. It merges the local
 the source directory with the language file of the locale and also the fallbackLanguage
 if given.
 
+### indent
+
+Type: `Number`
+Default: null
+
+The number of spaces to indent the json file during formatting. If null is given the file
+will be minified.
+
 License
 -------
 

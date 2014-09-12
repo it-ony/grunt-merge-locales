@@ -20,7 +20,8 @@ module.exports = function (grunt) {
                 locales: null,
                 fallbackLanguage: null,
                 generateLocaleFiles: true,
-                generateLanguageFiles: false
+                generateLanguageFiles: false,
+                indent: null
             });
 
             if (!options.sourceDirectory) {
@@ -49,6 +50,8 @@ module.exports = function (grunt) {
                 fallback = languages[fallbackLanguage] = grunt.file.readJSON(path.join(sourceDirectory, fallbackLanguage + ".json"));
             }
 
+            var indent = options.indent;
+
             locales.forEach(function(locale) {
                 var language = locale.split("_")[0];
 
@@ -59,7 +62,7 @@ module.exports = function (grunt) {
 
             if (options.generateLanguageFiles === true) {
                 Object.keys(languages).forEach(function (language) {
-                    var json = JSON.stringify(_.deepExtend({}, fallback, languages[language]));
+                    var json = JSON.stringify(_.deepExtend({}, fallback, languages[language]), null, indent);
                     var destinationFile = path.join(destinationDirectory, language + ".json");
                     grunt.file.write(destinationFile, json);
 
@@ -80,7 +83,7 @@ module.exports = function (grunt) {
                         languages[locale] = grunt.file.readJSON(localePath);
                     }
 
-                    var json = JSON.stringify(_.deepExtend({}, fallback, languages[language], languages[locale]));
+                    var json = JSON.stringify(_.deepExtend({}, fallback, languages[language], languages[locale]), null, indent);
                     var destinationFile = path.join(destinationDirectory, locale + ".json");
                     grunt.file.write(destinationFile, json);
                     grunt.log.writeln("Generated " + destinationFile);
