@@ -99,7 +99,7 @@ module.exports = function (grunt) {
 
                     var language = locale.split("_")[0];
 
-                    var localePath = sourceDirectory + locale + ".json";
+                    var localePath = path.join(sourceDirectory, locale + ".json");
                     if (!locales.hasOwnProperty(locale) && grunt.file.exists(localePath)) {
                         languages[locale] = grunt.file.readJSON(localePath);
                     }
