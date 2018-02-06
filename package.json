@@ -1,6 +1,6 @@
 {
   "name": "grunt-merge-locales",
-  "version": "0.2.2",
+    "version": "0.3.0",
   "description": "merges json files together",
   "main": "index.js",
   "scripts": {
