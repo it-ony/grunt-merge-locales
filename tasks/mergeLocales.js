@@ -40,6 +40,8 @@ module.exports = function (grunt) {
                 destinationDirectory: null,
                 locales: null,
                 fallbackLanguage: null,
+                fallback: null,
+                fallbackToLanguageFile: true,
                 generateLocaleFiles: true,
                 generateLanguageFiles: false,
                 indent: null
@@ -73,13 +75,15 @@ module.exports = function (grunt) {
 
             var indent = options.indent;
 
-            locales.forEach(function(locale) {
-                var language = locale.split("_")[0];
+            if (options.fallbackToLanguageFile) {
+                locales.forEach(function(locale) {
+                    var language = locale.split("_")[0];
 
-                if (!languages.hasOwnProperty(language)) {
-                    languages[language] = grunt.file.readJSON(path.join(sourceDirectory, language + ".json"));
-                }
-            });
+                    if (!languages.hasOwnProperty(language)) {
+                        languages[language] = grunt.file.readJSON(path.join(sourceDirectory, language + ".json"));
+                    }
+                });
+            }
 
             if (options.generateLanguageFiles === true) {
                 Object.keys(languages).forEach(function (language) {
@@ -88,23 +92,41 @@ module.exports = function (grunt) {
                     grunt.file.write(destinationFile, json);
 
                     grunt.log.writeln("Generated " + destinationFile);
-
                 });
             }
 
 
             if (options.generateLocaleFiles) {
 
-                locales.forEach(function (locale) {
-
-                    var language = locale.split("_")[0];
-
+                locales.forEach(function(locale) {
                     var localePath = path.join(sourceDirectory, locale + ".json");
                     if (!locales.hasOwnProperty(locale) && grunt.file.exists(localePath)) {
                         languages[locale] = grunt.file.readJSON(localePath);
                     }
+                });
 
-                    var json = JSON.stringify(_.deepExtend({}, fallback, languages[language], languages[locale]), null, indent);
+                locales.forEach(function(locale) {
+
+                    var language = locale.split("_")[0];
+
+                    var json = {};
+
+                    let fallbackLocaleConfiguration = (options.fallback || {})[locale];
+
+                    if (options.fallback && fallbackLocaleConfiguration) {
+                        fallbackLocaleConfiguration.reverse().forEach(function(fallbackLocale) {
+
+                            languages[fallbackLocale] = languages[fallbackLocale] || grunt.file.readJSON(path.join(sourceDirectory, fallbackLocale + ".json"));
+
+                            _.deepExtend(json, languages[fallbackLocale] || {});
+                        });
+
+                        json = JSON.stringify(json, null, indent);
+                    } else {
+                        json = JSON.stringify(_.deepExtend({}, fallback, languages[language] || {}, languages[locale]), null, indent);
+                    }
+
+
                     var destinationFile = path.join(destinationDirectory, locale + ".json");
                     grunt.file.write(destinationFile, json);
                     grunt.log.writeln("Generated " + destinationFile);
